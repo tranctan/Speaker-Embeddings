@@ -7,3 +7,6 @@ This is a mere small project to practice re-producing paper, if you want a repos
 ### Posts of Reproducing ML papers
 - https://towardsdatascience.com/converting-deep-learning-research-papers-to-code-f-f38bbd87352f
 - https://medium.com/@derekchia/common-problems-when-reproducing-a-machine-learning-paper-17178515d6c6
+
+### How the author of Resemblyzer implements GE2E loss
+- [Real-time Voice Cloning thesis - Section 3.3](https://matheo.uliege.be/bitstream/2268.2/6801/5/s123578Jemine2019.pdf)
