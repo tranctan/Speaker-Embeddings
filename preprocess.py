@@ -4,6 +4,7 @@ This file preprocesses input, including:
 - Normalize volume
 - Convert wav to mel-spectrogram
 - Eliminate silence ranges using VAD
+This part requires the most domain knowledge of Digital Signal Processing (DSP)
 """
 
 import numpy as np
@@ -26,9 +27,20 @@ def wav_to_mel(wav):
     """
     This function derives a mel-spectrogram 
     ready to be used by the encoder.
-    Note: This is not log-mel
+    Settings: 
+        - 40-channels mel spectrograms
+        - 25ms window width
+        - 10ms window step
+    Note: This is not log-mel as original paper.
     """
-    pass
+    frames = librosa.feature.melspectrogram(
+        wav,
+        sr=hparams["SAMPLING_RATE"],
+        n_fft=int(sampling_rate * hparams["MEL_WINDOW_LENGTH"] / 1000), # length of FFT window
+        hop_length=int(sampling_rate * hparams["MEL_WINDOW_STEP"] / 1000)= , # number of samples between successive frames
+        n_mels=hparams["N_MEL_CHANNELS"]
+    )
+    return frames.astype(np.float32)
 
 
 def normalize_volume(wav, target_dBFS, increase_only=False, decrease_only=False):
@@ -53,7 +65,33 @@ def trim_long_silence(wav):
     Ensuring that segments without voice in the waveform 
     remain no longer than a threshold determined by the VAD 
     parameters in config file
+    
+    :param wav: raw audio waveform, float numpy array
+    :return: the same waveform with silences trimmed away 
     """
+    # Compute the voice detection window size
+    samples_per_window = (hparams["VAD_WINDOW_LENGTH"] * sampling_rate) // 1000
+
+    # Trim the end of audio to have a multiple of window size
+    wav = wav[:len(wav) - (len(wav) % samples_per_window)]
+
+    # Convert float raw waveforms to 16-bit mono PCM
+    pcm_wave = struct.pack("%dh" % len(wav), *(np.round(wav * int16_max)).astype(np.int16))
+    
+    # Perform VAD
+    voice_flags = []
+    vad = webrtcvad.Vad(mode=3) # most aggresive mode
+    for window_start in range(0, len(wav), samples_per_window):
+        window_end = window_start + samples_per_window
+        voice_flags.append(vad.is_speech(pcm_wave[window_start * 2:window_end * 2],
+                                         sample_rate=sampling_rate))
+    voice_flags = np.array(voice_flags)
+    
+    # Smooth the voice detection with a moving average
+
+    # Dilate the voiced regions
+
+
     pass
 
 
