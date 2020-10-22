@@ -12,6 +12,7 @@ import webrtcvad
 import librosa
 import yaml
 from scipy.io.wavfile import read
+from scipy.ndimage.morphology import binary_dilation
 
 CONFIG_DIR = './hparams.yaml'
 # Read hyper-params from config file
@@ -88,12 +89,20 @@ def trim_long_silence(wav):
     voice_flags = np.array(voice_flags)
     
     # Smooth the voice detection with a moving average
+    def moving_average(array, width):
+        array_padded = np.concatenate((np.zeros((width - 1) // 2), array, np.zeros(width // 2)))
+        ret = np.cumsum(array_padded, dtype=float)
+        ret[width:] = ret[width:] - ret[:-width]
+        return ret[width - 1:] / width
+
+    audio_mask = moving_average(voice_flags, vad_moving_average_width)
+    audio_mask = np.round(audio_mask).astype(np.bool)
 
     # Dilate the voiced regions
+    audio_mask = binary_dilation(audio_mask, np.ones(hparams["VAD_MAX_SILENCE_LENGTH"]))
+    audio_mask = np.repeat(audio_mask, samples_per_window)
 
-
-    pass
-
+    return wav[audio_mask==True]
 
 def preprocess_wav(input_dir):
     """
