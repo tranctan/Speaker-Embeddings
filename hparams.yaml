@@ -7,4 +7,7 @@ MEL_WINDOW_LENGTH: 25
 MEL_WINDOW_STEP: 10
 
 # Voice Activation Detection
+# Window size of the VAD. Must be either 10, 20 or 30 milliseconds.
+# This sets the granularity of the VAD. Should not need to be changed.
+VAD_WINDOW_LENGTH: 30  # In milliseconds
 VAD_MAX_SILENCE_LENGTH: 6

@@ -70,10 +70,10 @@ def trim_long_silence(wav):
     :param wav: raw audio waveform, float numpy array
     :return: the same waveform with silences trimmed away 
     """
-    # Compute the voice detection window size
+    # Compute the voice detection window size - how many samples in VAD_WINDOW_LENGTH milliseconds
     samples_per_window = (hparams["VAD_WINDOW_LENGTH"] * sampling_rate) // 1000
 
-    # Trim the end of audio to have a multiple of window size
+    # Trim the end of audio to make sure the whole signal have a multiple of window size
     wav = wav[:len(wav) - (len(wav) % samples_per_window)]
 
     # Convert float raw waveforms to 16-bit mono PCM
@@ -96,6 +96,7 @@ def trim_long_silence(wav):
         return ret[width - 1:] / width
 
     audio_mask = moving_average(voice_flags, vad_moving_average_width)
+    # Binarize after moving average
     audio_mask = np.round(audio_mask).astype(np.bool)
 
     # Dilate the voiced regions
