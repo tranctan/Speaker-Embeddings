@@ -54,3 +54,8 @@ As the authors of Resemblyzer indicated:
 
 ![](https://i.imgur.com/Gc0OpVq.png)
 
+This function seemed to be the most complicated, but let's just break it down:
+- In order for the VAD to work, we need to define a VAD window length, which could be 10, 20 or 30 milliseconds. Thus, prior to performing VAD step, we need to calculate how many audio signal samples needed for a certain VAD window length. We then need to trim the redundant part at the end of the audio to make sure the whole signal array has a length of multiple of VAD window lenght. The last step to prepare the input for the VAD is to convert it into 16-bit mono PCM format.
+- The VAD step is straightforward, in which we feed the pcm wave and receive the the corresponding voiced-flag arrays.
+- In order to remove the short spikes in the detection output (the very short unvoiced parts), we perform a simple moving averge (SMA) step. SMA is a technique usually used to calculate the average of a sequential data (time series, audio signal, etc.) The formula of SMA is $SMA = (p1 + p2 + ... + pn) / N$. The numerator can be achieved by using `numpy.cumsum()`. Since the output of the moving average is a floating point value, we need to binarize it again.
+- Final step is to perform the binary dilation, which expands value of 1 or True of the voice flag further.

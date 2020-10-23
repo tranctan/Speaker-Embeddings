@@ -38,7 +38,7 @@ def wav_to_mel(wav):
         wav,
         sr=hparams["SAMPLING_RATE"],
         n_fft=int(sampling_rate * hparams["MEL_WINDOW_LENGTH"] / 1000), # length of FFT window
-        hop_length=int(sampling_rate * hparams["MEL_WINDOW_STEP"] / 1000)= , # number of samples between successive frames
+        hop_length=int(sampling_rate * hparams["MEL_WINDOW_STEP"] / 1000), # number of samples between successive frames
         n_mels=hparams["N_MEL_CHANNELS"]
     )
     return frames.astype(np.float32)
