@@ -15,3 +15,4 @@ This is a mere small project to practice re-producing paper, if you want a repos
 ### Dataset
 - [VCTK](https://datashare.ed.ac.uk/handle/10283/3443) is a large and sufficient multi-speaker dataset
 - [Mozilla Common Voice](https://commonvoice.mozilla.org/en/datasets) is a smaller multi-speaker dataset crowdsourced (Can be sufficient for prototyping)
+- [VIVOS](https://paperswithcode.com/dataset/vivos) is good multi-speaker VNese voice dataset
